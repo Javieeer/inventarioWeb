@@ -52,8 +52,8 @@ export const AuthProvider = ({ children }) => {
     if (user) {
       getUserData();
     }
-
     setLoading(false);
+    
   }, [user]);
 
   // ✅ Función para iniciar sesión

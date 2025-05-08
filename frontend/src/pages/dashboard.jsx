@@ -19,11 +19,14 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from "../context/AuthContext";
 import { styles } from "../styles/dashboard"; // importa tus estilos como objeto
+import { useNavigate } from "react-router-dom";
+
 
 
 const Dashboard = () => {
-  const { user, userData, logout } = useAuth();
 
+  const { user, userData, logout } = useAuth();
+  const navigate = useNavigate();
   const handleLogout = async () => {
     await logout();
   };
@@ -63,7 +66,7 @@ const Dashboard = () => {
         <Box sx={{ overflow: "auto" }}>
           <List>
             {isAdmin && (
-              <ListItemButton>
+              <ListItemButton onClick={() => navigate("/empleados")}>
                 <ListItemIcon><PeopleIcon /></ListItemIcon>
                 <ListItemText primary="Base de datos empleados"/>
               </ListItemButton>                
