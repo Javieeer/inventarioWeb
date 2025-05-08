@@ -11,6 +11,7 @@ import {
   Box,
   Divider,
   ListItemIcon,
+  ListItemButton
 } from "@mui/material";
 import PeopleIcon from '@mui/icons-material/People';
 import InventoryIcon from '@mui/icons-material/Inventory';
@@ -34,7 +35,8 @@ const Dashboard = () => {
     return "Buenas noches";
   };
 
-  const userName = user?.email?.split("@")[0] || "Usuario";
+  const userName = userData?.nombre || "Usuario";
+  const userLastName = userData?.apellido || "";
   const isAdmin = userData?.rol === "admin";
 
   return (
@@ -44,7 +46,7 @@ const Dashboard = () => {
       <AppBar position="fixed" sx={styles.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            {getGreeting()}, {userName}
+            {getGreeting()}, {userName} {userLastName}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -61,25 +63,24 @@ const Dashboard = () => {
         <Box sx={{ overflow: "auto" }}>
           <List>
             {isAdmin && (
-              <ListItem button="true">
-
+              <ListItemButton>
                 <ListItemIcon><PeopleIcon /></ListItemIcon>
-                <ListItemText primary="Base de datos empleados" />
-              </ListItem>
+                <ListItemText primary="Base de datos empleados"/>
+              </ListItemButton>                
             )}
-            <ListItem button="true">
+            <ListItemButton>
               <ListItemIcon><InventoryIcon /></ListItemIcon>
               <ListItemText primary="Base de datos productos" />
-            </ListItem>
-            <ListItem button>
+            </ListItemButton>
+            <ListItemButton>
               <ListItemIcon><SettingsIcon /></ListItemIcon>
               <ListItemText primary="Configuración de perfil" />
-            </ListItem>
+            </ListItemButton>
             <Divider />
-            <ListItem button onClick={handleLogout}>
+            <ListItemButton onClick={handleLogout}>
               <ListItemIcon><LogoutIcon /></ListItemIcon>
               <ListItemText primary="Cerrar sesión" />
-            </ListItem>
+            </ListItemButton>
           </List>
         </Box>
       </Drawer>

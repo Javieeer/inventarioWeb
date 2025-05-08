@@ -53,21 +53,29 @@ export const AuthProvider = ({ children }) => {
       getUserData();
     }
 
-    setLoading(false); // Se mueve aquí fuera del `finally` y `else` para no ejecutarse repetidamente
+    setLoading(false);
   }, [user]);
 
-  // Función logout
+  // ✅ Función para iniciar sesión
+  const login = async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  // ✅ Función para cerrar sesión
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('Error al cerrar sesión:', error.message);
     } else {
-      setUser(null); // Elimina el usuario de la sesión
+      setUser(null);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, userData, loading, logout }}>
+    <AuthContext.Provider value={{ user, userData, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -97,6 +97,7 @@ const Login = () => {
             onBlur={handleBlurEmail}
             required
             placeholder={!emailFocused ? "Erley_admin" : ""}
+            autoComplete="email"
             error={emailError}
             helperText={emailError ? "Este usuario no está registrado." : ""}
             InputProps={{
@@ -117,6 +118,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="current-password"
             error={passwordError}
             helperText={passwordError ? "Contraseña incorrecta." : ""}
             InputProps={{
