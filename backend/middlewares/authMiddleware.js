@@ -1,0 +1,1 @@
+/* Middleware para verificar si el usuario está autenticado */

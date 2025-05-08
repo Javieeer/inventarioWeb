@@ -1,0 +1,1 @@
+/* Controlador para login, registro, etc */

@@ -1,0 +1,1 @@
+/* Configuración y funciones relacionadas con autenticación */
