@@ -42,7 +42,7 @@ const MenuLateral = ( { rol } ) => {
                     <ListItemIcon><InventoryIcon /></ListItemIcon>
                     <ListItemText primary="Base de datos productos" />
                 </ListItemButton>
-                <ListItemButton>
+                <ListItemButton onClick={() => navigate("/configPerfil")}>
                     <ListItemIcon><SettingsIcon /></ListItemIcon>
                     <ListItemText primary="Configuración de perfil" />
                 </ListItemButton>

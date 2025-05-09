@@ -19,6 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../context/AuthContext";
 import { styles } from "../styles/dashboard";
 import { supabase } from "../../supabaseClient";
+import { useNavigate } from "react-router-dom";
 import Saludo from "../components/saludo";
 import MenuLateral from "../components/menuLateral";
 
@@ -28,6 +29,7 @@ const Empleados = () => {
   const { userData } = useAuth();
   const [empleados, setEmpleados] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const navigate = useNavigate();
 
   /* Definimos el rol para mostrar o no la db de empleados */
   const isAdmin = userData?.rol === "admin";
@@ -93,7 +95,7 @@ const Empleados = () => {
             <TextField label="Buscar empleados" variant="outlined" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
             <Button variant="contained" onClick={buscarEmpleados}>Buscar</Button>
             <Button variant="outlined" onClick={limpiarBusqueda}>Limpiar</Button>
-            <Button variant="contained" color="success">Crear empleado</Button>
+            <Button variant="contained" color="success" onClick={() => navigate("/nuevoEmpleado")}>Crear empleado</Button>
           </Box>
 
           {/* Tabla de empleados */}
