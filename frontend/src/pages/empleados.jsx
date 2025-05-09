@@ -20,6 +20,7 @@ import { useAuth } from "../context/AuthContext";
 import { styles } from "../styles/dashboard";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { usarMensaje } from "../context/mensaje";
 import Saludo from "../components/saludo";
 import MenuLateral from "../components/menuLateral";
 
@@ -27,6 +28,7 @@ const Empleados = () => {
 
   /* Declaramos estados necesarios para la ruta de empleados */
   const { userData } = useAuth();
+  const { mostrarMensaje } = usarMensaje();
   const [empleados, setEmpleados] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
@@ -57,7 +59,7 @@ const Empleados = () => {
   /* Eliminamos empleado siempre y cuando no seas tu mismo */
   const eliminarEmpleado = async (id) => {
     if (userData.id === id) {
-      alert("No puedes eliminar tu propio usuario.");
+      mostrarMensaje("No puedes eliminar tu propio usuario.", "error");
       return;
     } else {
       respuesta = window.confirm("¿Estás seguro de que deseas eliminar este empleado?");

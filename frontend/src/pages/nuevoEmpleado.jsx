@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from "react";
 import {
   Toolbar,
@@ -15,10 +14,9 @@ import { useAuth } from "../context/AuthContext";
 import { styles } from "../styles/dashboard";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import { usarMensaje } from "../context/mensaje";
 import Saludo from "../components/saludo";
 import MenuLateral from "../components/menuLateral";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
 
 const NuevoEmpleado = () => {
 
@@ -31,13 +29,8 @@ const NuevoEmpleado = () => {
     rol: "",
     email: "",
   });
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // o "error"
+  const { mostrarMensaje } = usarMensaje();
   const navigate = useNavigate();
-  const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
 
   /* Definimos el rol para mostrar o no la db de empleados */
   const isAdmin = userData?.rol === "admin";
@@ -56,52 +49,54 @@ const NuevoEmpleado = () => {
 
     // Validación de campos vacíos
     if (!nombre || !apellido || !documento || !rol || !email) {
-      setSnackbarMessage("Todos los campos son obligatorios.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      mostrarMensaje("Todos los campos son obligatorios", "error");
       return;
     }
 
     // Validar que nombre y apellido no contengan números
     const contieneNumero = /\d/;
     if (contieneNumero.test(nombre) || contieneNumero.test(apellido)) {
-      setSnackbarMessage("Nombre y apellido no deben contener números.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      mostrarMensaje("Nombre y apellido no deben contener números.", "error");
       return;
     }
 
     // Validar que documento solo contenga números
     const soloNumeros = /^\d+$/;
     if (!soloNumeros.test(documento)) {
-      setSnackbarMessage("El documento debe contener solo números.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      mostrarMensaje("El documento debe contener solo números.", "error");
       return;
     }
 
     // Validar que el correo contenga un '@'
     if (!email.includes("@")) {
-      setSnackbarMessage("El correo debe contener el símbolo '@'.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      mostrarMensaje("El correo debe contener el símbolo '@'.", "error");
       return;
     }
 
+    const { data, error } = await supabase.auth.signUp({
+      email: nuevoEmpleado.email,
+      password: nuevoEmpleado.documento
+    });
+
     // Si pasa todas las validaciones, insertar en Supabase
-    const { error } = await supabase.from("users").insert([nuevoEmpleado]);
+    const { user } = data;
+    await supabase.from("users").insert([
+      {
+        id: user.id, // UUID del nuevo usuario autenticado
+        nombre: nuevoEmpleado.nombre,
+        apellido: nuevoEmpleado.apellido,
+        documento: nuevoEmpleado.documento,
+        rol: nuevoEmpleado.rol,
+        email: nuevoEmpleado.email,
+      },
+    ]);
     if (!error) {
-      setSnackbarMessage("Empleado creado con éxito");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      mostrarMensaje("Empleado creado con éxito", "success");
       setTimeout(() => navigate(-1), 1500); // da tiempo a leer el mensaje
     } else {
-      setSnackbarMessage("Error al crear el empleado");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      mostrarMensaje("Error al crear el empleado", "error");
     }
   };
-
 
   /* Función para cancelar la creación del nuevo empleado */
   const cancelar = () => {
@@ -175,18 +170,6 @@ const NuevoEmpleado = () => {
           
         </Box>
       )}
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-
     </Box>
   );
 };
