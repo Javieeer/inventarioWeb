@@ -56,18 +56,35 @@ const Empleados = () => {
     cargarEmpleados();
   };
 
+  const handleEdit = (e) => {
+    console.log(e);
+    console.log(e.id);
+    navigate(`/editarEmpleado/${e.id}`, { state: { e } });
+  }
+
   /* Eliminamos empleado siempre y cuando no seas tu mismo */
   const eliminarEmpleado = async (id) => {
+    console.log(id);
     if (userData.id === id) {
       mostrarMensaje("No puedes eliminar tu propio usuario.", "error");
       return;
     } else {
-      respuesta = window.confirm("¿Estás seguro de que deseas eliminar este empleado?");
-      if (!respuesta) return;
-      if (respuesta) {
-        const { error } = await supabase.from("users").delete().eq("id", id);
-        if (!error) cargarEmpleados();
-      }
+      await fetch("http://localhost:3001/eliminarUsuario", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          mostrarMensaje(data.error, "error");
+        } else {
+          mostrarMensaje("Empleado eliminado con éxito.", "success");
+          cargarEmpleados();
+        }
+      });
     }
   };
 
@@ -125,7 +142,7 @@ const Empleados = () => {
                     <TableCell>{e.email}</TableCell>
                     <TableCell>
                     <IconButton 
-                      /* onClick={() => handleEdit(empleado)}  */
+                      onClick={() => handleEdit(e)} 
                       sx={{ color: 'gray', marginRight: 1 }}
                     >
                       <EditIcon />
@@ -143,6 +160,15 @@ const Empleados = () => {
             </Table>
 
           </TableContainer>
+        </Box>
+      )}
+      
+      {/* Si no es admin, mostramos un mensaje */}
+      {!isAdmin && (
+        <Box component="main" sx={styles.mainContent}>
+          <Toolbar />
+          <h1>Acceso denegado</h1>
+          <p>No tienes permiso para acceder a esta sección.</p>
         </Box>
       )}
     </Box>

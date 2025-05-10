@@ -1,1 +1,0 @@
-/* Middleware para verificar el rol del usuario */

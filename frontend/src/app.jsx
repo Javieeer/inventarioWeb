@@ -10,6 +10,7 @@ import Productos from './pages/productos';
 import ConfigPerfil from './pages/configPerfil';
 import NuevoEmpleado from './pages/nuevoEmpleado';
 import NuevoProducto from './pages/nuevoProducto';
+import EditarEmpleado from './pages/editarEmpleado';
 import { Mensaje } from './context/mensaje.jsx';
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         <Route path="/configPerfil" element={user ? <ConfigPerfil /> : <Login />} />
         <Route path="/nuevoEmpleado" element={user ? <NuevoEmpleado /> : <Login />} />
         <Route path="/nuevoProducto" element={user ? <NuevoProducto /> : <Login />} />
+        <Route path="/editarEmpleado/:id" element={user ? <EditarEmpleado /> : <Login />} />
       </Routes>
     </Mensaje>
   );

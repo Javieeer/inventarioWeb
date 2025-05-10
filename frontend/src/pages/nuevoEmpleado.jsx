@@ -92,7 +92,7 @@ const NuevoEmpleado = () => {
     ]);
     if (!error) {
       mostrarMensaje("Empleado creado con éxito", "success");
-      setTimeout(() => navigate(-1), 1500); // da tiempo a leer el mensaje
+      setTimeout(() => navigate("/empleados"), 1500); 
     } else {
       mostrarMensaje("Error al crear el empleado", "error");
     }
