@@ -1,8 +1,8 @@
 import { Typography, CssBaseline, Box } from "@mui/material";
-import { useAuth } from "../context/AuthContext";
-import { styles } from "../styles/dashboard"; // importa tus estilos como objeto
-import Saludo from "../components/saludo";
-import MenuLateral from "../components/menuLateral";
+import { useAuth } from "../../context/AuthContext";
+import { styles } from "../../styles/dashboard"; // importa tus estilos como objeto
+import Saludo from "../../components/saludo";
+import MenuLateral from "../../components/menuLateral";
 
 
 const Dashboard = () => {

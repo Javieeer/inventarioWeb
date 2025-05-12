@@ -6,11 +6,15 @@ const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
+/* Manejar los eventos */
 export const AuthProvider = ({ children }) => {
+
+  /* Declaramos los estados necesarios */
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  /* Obtenemos el usuario actual y sus datos */
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -29,6 +33,7 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
+  /* Objetenemos los datos del usuario desde user.auth */
   useEffect(() => {
     const getUserData = async () => {
       if (!user?.id) return;
@@ -56,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     
   }, [user]);
 
-  // ✅ Función para iniciar sesión
+  /* Funcion para iniciar sesión */
   const login = async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
@@ -64,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Función para cerrar sesión
+  /* Funcion para cerrar sesión */
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {

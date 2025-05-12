@@ -10,13 +10,13 @@ import {
   Select,
   MenuItem
 } from "@mui/material";
-import { useAuth } from "../context/AuthContext";
-import { styles } from "../styles/dashboard";
-import { supabase } from "../../supabaseClient";
+import { useAuth } from "../../context/AuthContext";
+import { styles } from "../../styles/dashboard";
+import { supabase } from "../../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import { usarMensaje } from "../context/mensaje";
-import Saludo from "../components/saludo";
-import MenuLateral from "../components/menuLateral";
+import { usarMensaje } from "../../context/mensaje";
+import Saludo from "../../components/saludo";
+import MenuLateral from "../../components/menuLateral";
 
 const NuevoEmpleado = () => {
 

@@ -17,9 +17,11 @@ app.get('/', (req, res) => {
 // Rutas
 const editarUsuario = require('./routes/editarUsuario/index');
 const eliminarUsuario = require('./routes/eliminarUsuario/index');
+const editarMiPerfil = require('./routes/perfil/index');
 
 app.use('/editarUsuario', editarUsuario);
 app.use('/eliminarUsuario', eliminarUsuario);
+app.use('/mi-perfil', editarMiPerfil);
 
 /* // Importar tus rutas
 app.use("/eliminarUsuario", require("./eliminarUsuario/index"));
@@ -31,3 +33,6 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
 });
+
+
+

@@ -9,18 +9,24 @@ import {
   Typography,
   Paper,
   CssBaseline,
-  Toolbar
+  Toolbar,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from "@mui/material";
-import { supabase } from "../../supabaseClient";
-import { useAuth } from "../context/AuthContext";
-import Saludo from "../components/saludo";
-import MenuLateral from "../components/menuLateral";
-import { styles } from "../styles/dashboard";
+import { supabase } from "../../../supabaseClient";
+import { useAuth } from "../../context/AuthContext";
+import { usarMensaje } from "../../context/mensaje";
+import Saludo from "../../components/saludo";
+import MenuLateral from "../../components/menuLateral";
+import { styles } from "../../styles/dashboard";
 
 const EditarEmpleado = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { userData } = useAuth();
+  const { mostrarMensaje } = usarMensaje();
 
   const isAdmin = userData?.rol === "admin";
 
@@ -41,7 +47,7 @@ const EditarEmpleado = () => {
         .single();
 
       if (error) {
-        console.error("Error al obtener empleado:", error);
+        mostrarMensaje("Error al obtener empleado", "error");
         navigate("/empleados");
       } else {
         setEmpleado(data);
@@ -60,8 +66,9 @@ const EditarEmpleado = () => {
       .eq("id", id);
 
     if (error) {
-      console.error("Error al actualizar:", error);
+      mostrarMensaje("Error al actualizar el empleado", "error");
     } else {
+      mostrarMensaje("Empleado actualizado correctamente", "success");
       navigate("/empleados");
     }
   };
@@ -125,12 +132,19 @@ const EditarEmpleado = () => {
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField
-                      label="Rol"
-                      value={empleado.rol}
-                      onChange={(e) => setEmpleado({ ...empleado, rol: e.target.value })}
-                      fullWidth
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel id="rol-label">Rol</InputLabel>
+                      <Select
+                        labelId="rol-label"
+                        name="rol"
+                        value={empleado.rol}
+                        label="Rol"
+                        onChange={(e) => setEmpleado({ ...empleado, rol: e.target.value })}
+                      >
+                        <MenuItem value="admin">admin</MenuItem>
+                        <MenuItem value="empleado">empleado</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Grid>
                 </Grid>
 

@@ -12,13 +12,13 @@ import {
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/authContext.jsx";
+import { useAuth } from "../../context/authContext.jsx";
 import {
   containerStyle,
   boxStyle,
   lockIconStyle,
   buttonStyle,
-} from "../styles/login";
+} from "../../styles/login.js";
 
 const Login = () => {
   const { login } = useAuth();

@@ -16,13 +16,13 @@ import {
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { useAuth } from "../context/AuthContext";
-import { styles } from "../styles/dashboard";
-import { supabase } from "../../supabaseClient";
+import { useAuth } from "../../context/AuthContext";
+import { styles } from "../../styles/dashboard";
+import { supabase } from "../../../supabaseClient";
 import { useNavigate } from "react-router-dom";
-import { usarMensaje } from "../context/mensaje";
-import Saludo from "../components/saludo";
-import MenuLateral from "../components/menuLateral";
+import { usarMensaje } from "../../context/mensaje";
+import Saludo from "../../components/saludo";
+import MenuLateral from "../../components/menuLateral";
 
 const Empleados = () => {
 
@@ -57,14 +57,16 @@ const Empleados = () => {
   };
 
   const handleEdit = (e) => {
-    console.log(e);
-    console.log(e.id);
-    navigate(`/editarEmpleado/${e.id}`, { state: { e } });
+    if (userData.id === e.id) {
+      mostrarMensaje("No puedes editar tu propio usuario.", "error");
+      return;
+    } else {
+      navigate(`/empleados/editarEmpleado/${e.id}`, { state: { e } });
+    }
   }
 
   /* Eliminamos empleado siempre y cuando no seas tu mismo */
   const eliminarEmpleado = async (id) => {
-    console.log(id);
     if (userData.id === id) {
       mostrarMensaje("No puedes eliminar tu propio usuario.", "error");
       return;
@@ -110,11 +112,11 @@ const Empleados = () => {
           <Toolbar />
 
           {/* Sección de busqueda */}
-          <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2, mb: 2, justifyContent: 'center' }}>
             <TextField label="Buscar empleados" variant="outlined" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
             <Button variant="contained" onClick={buscarEmpleados}>Buscar</Button>
             <Button variant="outlined" onClick={limpiarBusqueda}>Limpiar</Button>
-            <Button variant="contained" color="success" onClick={() => navigate("/nuevoEmpleado")}>Crear empleado</Button>
+            <Button variant="contained" color="success" onClick={() => navigate("/empleados/nuevoEmpleado")}>Crear empleado</Button>
           </Box>
 
           {/* Tabla de empleados */}
@@ -128,7 +130,7 @@ const Empleados = () => {
                   <TableCell>Documento</TableCell>
                   <TableCell>Rol</TableCell>
                   <TableCell>Correo</TableCell>
-                  <TableCell>Acciones</TableCell>
+                  <TableCell >Acciones</TableCell>
                 </TableRow>
               </TableHead>
               {/* Datos de la tabla por fila */}
@@ -140,7 +142,7 @@ const Empleados = () => {
                     <TableCell>{e.documento}</TableCell>
                     <TableCell>{e.rol}</TableCell>
                     <TableCell>{e.email}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{ display: 'flex' }}>
                     <IconButton 
                       onClick={() => handleEdit(e)} 
                       sx={{ color: 'gray', marginRight: 1 }}
