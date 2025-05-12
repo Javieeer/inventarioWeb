@@ -30,6 +30,7 @@ const ConfigPerfil = () => {
     contraseña: "",
     confirmarContraseña: "",
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (userData) {
@@ -51,10 +52,40 @@ const ConfigPerfil = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    let correoDataBase = false;
+    let correoAutentication = false;
 
     try {
-      const token = (await supabase.auth.getSession()).data.session.access_token;
+      // Obtener el token
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
 
+      if (!token) {
+        mostrarMensaje("No se pudo obtener el token de sesión", "error");
+        return;
+      }
+
+      // Actualizar en la tabla users
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({
+          nombre: perfil.nombre,
+          apellido: perfil.apellido,
+          ...(isAdmin && perfil.correo ? { email: perfil.correo } : {}),
+        })
+        .eq("id", userData.id);
+
+      if (updateError) {
+        mostrarMensaje("Error al actualizar en la base de datos", "error");
+      } else {
+        correoDataBase = true;
+      }
+
+      // Actualizar en Supabase Auth
       const response = await fetch(`${import.meta.env.VITE_API_URL}/mi-perfil`, {
         method: "PUT",
         headers: {
@@ -62,24 +93,39 @@ const ConfigPerfil = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          nombre: perfil.nombre,
-          apellido: perfil.apellido,
           email: isAdmin ? perfil.correo : undefined,
           password: perfil.contraseña || undefined,
         }),
       });
 
-      const data = await response.json();
-      console.log('Respuesta del backend:', data); // Depuración
+      if (response.ok) {
+        correoAutentication = true;
+      } else {
+        mostrarMensaje("Error al actualizar en la autenticación", "error");
+      }
 
-      if (!response.ok) throw new Error(data.error || "Error al actualizar");
+      if (correoDataBase && correoAutentication) {
+        mostrarMensaje("Datos actualizados exitosamente. Cerrando sesión...", "success");
 
-      mostrarMensaje("success", "Perfil actualizado correctamente");
+        const cerrarSesionYRedirigir = async () => {
+          await supabase.auth.signOut({ scope: 'local' });
+          navigate("/login");
+        };
+
+        setTimeout(() => {
+          cerrarSesionYRedirigir();
+        }, 2000);
+      } else {
+        mostrarMensaje("Error al actualizar los datos", "error");
+      }
     } catch (err) {
-      console.error("Error al actualizar perfil:", err);
-      mostrarMensaje("error", err.message);
+      mostrarMensaje("Error inesperado", "error");
+    } finally {
+      setLoading(false);
     }
   };
+
+
 
 
   return (
@@ -167,8 +213,13 @@ const ConfigPerfil = () => {
             </Grid>
 
             <Box sx={{ mt: 4, display: "flex", justifyContent: "space-between", width: "100%" }}>
-              <Button type="submit" variant="contained" color="primary">
-                Guardar cambios
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={loading}
+              >
+                {loading ? "Actualizando..." : "Guardar cambios"}
               </Button>
               <Button variant="outlined" color="secondary" onClick={() => navigate("/dashboard")}>
                 Cancelar

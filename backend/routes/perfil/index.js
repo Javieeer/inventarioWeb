@@ -40,9 +40,12 @@ router.put('/', async (req, res) => {
 
     if (Object.keys(updates).length > 0) {
       const { error: authError } = await supabase.auth.admin.updateUserById(userId, updates);
+      console.log('Actualizando email/contraseña en auth con:', updates);
+      console.log('Usando userId:', userId);
+
       if (authError) {
-        console.error('Error al actualizar la tabla de autenticación:', authError.message); // Depuración
-        throw authError;
+        console.error('Auth update error:', authError);
+        return res.status(500).json({ error: 'Error actualizando autenticación', details: authError });
       }
     }
 
